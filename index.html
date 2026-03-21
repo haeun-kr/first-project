@@ -5,147 +5,187 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>대구국제고 대외협력부</title>
     <style>
-        :root { --main-blue: #3478c6; --bg-gray: #f4f7f9; }
-        body { font-family: 'Pretendard', sans-serif; margin: 0; background: var(--bg-gray); color: #333; }
-        header { 
-            background: white; padding: 15px 40px; display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100;
-        }
-        .header-left { display: flex; align-items: center; }
-        .logo { width: 55px; height: auto; margin-right: 15px; }
-        .header-title h1 { margin: 0; font-size: 22px; color: var(--main-blue); font-weight: 800; }
-        .admin-btn { background: #eee; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; color: #666; font-size: 13px; }
-
-        .container { max-width: 700px; margin: 30px auto; padding: 0 20px; }
+        :root { --main-blue: #3478c6; --bg: #f8f9fa; }
+        body { font-family: 'Pretendard', sans-serif; margin: 0; background: var(--bg); }
         
-        /* 입력 섹션 */
-        .write-card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; margin-bottom: 12px; font-size: 15px; }
-        textarea { height: 100px; resize: none; }
-        .btn-submit { background: var(--main-blue); color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-submit:hover { background: #265a96; }
+        /* 헤더 & 로고 */
+        header { background: white; padding: 15px 40px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); sticky: top; z-index: 100; }
+        .header-left { display: flex; align-items: center; cursor: pointer; }
+        .logo { width: 45px; height: auto; margin-right: 12px; }
+        .header-title h1 { margin: 0; font-size: 20px; color: var(--main-blue); }
+
+        /* 네비게이션 탭 */
+        nav { background: white; display: flex; justify-content: center; border-top: 1px solid #eee; }
+        .tab-btn { padding: 15px 25px; border: none; background: none; cursor: pointer; font-size: 16px; font-weight: 600; color: #666; transition: 0.3s; }
+        .tab-btn.active { color: var(--main-blue); border-bottom: 3px solid var(--main-blue); }
+
+        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; position: relative; }
+        
+        /* 글쓰기 버튼 */
+        .write-trigger { position: absolute; right: 20px; top: -10px; background: var(--main-blue); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
         /* 게시물 스타일 */
-        .post { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #eef1f5; position: relative; }
-        .post.is-pinned { border: 2px solid var(--main-blue); background: #f0f7ff; }
-        .pin-tag { color: var(--main-blue); font-size: 12px; font-weight: bold; display: block; margin-bottom: 5px; }
-        .post-name { font-weight: bold; font-size: 15px; margin-bottom: 8px; display: block; }
-        .post-msg { line-height: 1.6; white-space: pre-wrap; }
+        .post-card { background: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border: 1px solid #eee; position: relative; }
+        .post-card.pinned { border: 2px solid var(--main-blue); background: #f0f7ff; }
+        .pin-label { color: var(--main-blue); font-size: 12px; font-weight: bold; margin-bottom: 8px; display: block; }
+        .post-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #f5f5f5; padding-bottom: 10px; }
+        .post-name { font-weight: bold; color: #444; }
+        .post-date { font-size: 12px; color: #999; }
+        .post-content { line-height: 1.6; white-space: pre-wrap; margin-bottom: 15px; }
 
-        /* 관리 도구 */
-        .manage-box { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; text-align: right; }
-        .btn-m { padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 5px; background: white; border: 1px solid #ddd; }
-        .btn-del { color: #d93025; border-color: #f8d7da; }
+        /* 첨부파일 표시 */
+        .attachment { background: #f1f3f5; padding: 10px; border-radius: 8px; display: flex; align-items: center; text-decoration: none; color: #495057; font-size: 14px; }
+        .attachment:hover { background: #e9ecef; }
+        .img-preview { max-width: 100%; border-radius: 8px; margin-top: 10px; display: block; }
+
+        /* 글쓰기 모달 */
+        #writeModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; }
+        .modal-content input, .modal-content textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         
-        .loading { text-align: center; color: #888; padding: 20px; }
+        .admin-controls { margin-top: 15px; text-align: right; display: none; }
+        .btn-s { padding: 5px 10px; font-size: 12px; border-radius: 4px; border: 1px solid #ddd; cursor: pointer; margin-left: 5px; }
+
+        .home-section-title { font-size: 18px; margin-bottom: 20px; color: #333; font-weight: bold; border-left: 4px solid var(--main-blue); padding-left: 10px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="header-left">
+    <div class="header-left" onclick="showTab('홈')">
         <img src="logo.webp" alt="로고" class="logo">
-        <div class="header-title"><h1>대구국제고 대외협력부</h1></div>
+        <div class="header-title"><h1>대국고 대외협력부</h1></div>
     </div>
-    <button class="admin-btn" onclick="toggleAdmin()">⚙️ 관리자 모드</button>
+    <button class="btn-s" onclick="toggleAdmin()">관리자 로그인</button>
 </header>
 
-<div class="container">
-    <div class="write-card">
-        <input type="text" id="name" placeholder="작성자 이름">
-        <textarea id="message" placeholder="내용을 입력하세요"></textarea>
-        <button class="btn-submit" onclick="submitPost()">등록하기</button>
-    </div>
+<nav>
+    <button class="tab-btn active" id="tab-홈" onclick="showTab('홈')">홈</button>
+    <button class="tab-btn" id="tab-공지사항" onclick="showTab('공지사항')">공지사항</button>
+    <button class="tab-btn" id="tab-대외활동" onclick="showTab('대외활동')">대외활동</button>
+    <button class="tab-btn" id="tab-독서토론" onclick="showTab('독서토론')">독서토론</button>
+    <button class="tab-btn" id="tab-협동조합" onclick="showTab('협동조합')">협동조합</button>
+</nav>
 
-    <div id="loader" class="loading">게시물을 불러오는 중...</div>
-    <div id="postsContainer"></div>
+<div class="container">
+    <button class="write-trigger" id="writeBtn" onclick="openModal()" style="display:none;">+ 글쓰기</button>
+    <div id="contentTitle" class="home-section-title">주요 공지사항</div>
+    <div id="postsContainer">로딩 중...</div>
+</div>
+
+<div id="writeModal">
+    <div class="modal-content">
+        <h3>글 올리기 (<span id="targetCategory"></span>)</h3>
+        <input type="text" id="w-name" placeholder="작성자">
+        <textarea id="w-message" placeholder="내용을 입력하세요" rows="5"></textarea>
+        <input type="text" id="w-file" placeholder="사진/문서 링크 (구글 드라이브 공유 링크 등)">
+        <div style="display: flex; gap: 10px;">
+            <button class="write-trigger" style="position:static; flex:1;" onclick="submitPost()">등록</button>
+            <button class="btn-s" style="flex:1;" onclick="closeModal()">취소</button>
+        </div>
+    </div>
 </div>
 
 <script>
-    // ⚠️ 중요: 여기에 본인의 구글 앱스 스크립트 배포 URL을 넣어주세요!
-    const SCRIPT_URL = "https://script.google.com/a/macros/dhi.hs.kr/s/AKfycbyzWtWuLUejO-iA8sY7nW5XIkw_z7NaExO9yrjM60qZKd0Bmj59o39u-BsvG_xTR5ck/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXwP8YIE35VPyadkgEmuXyI0r-WZW-3J9iUHSXgU3Gyqpqm_c3uzD4kduXnERXIkD5yw/exec";
+    let currentTab = '홈';
+    let allPosts = [];
     let isAdmin = false;
 
-    // 데이터 불러오기
-    async function fetchPosts() {
+    async function loadData() {
         try {
             const res = await fetch(SCRIPT_URL);
-            const data = await res.json();
-            renderPosts(data);
-        } catch (e) {
-            console.error(e);
-            document.getElementById('loader').innerText = "데이터를 불러오지 못했습니다.";
-        }
+            allPosts = await res.json();
+            render();
+        } catch (e) { document.getElementById('postsContainer').innerText = "데이터 로드 실패"; }
     }
 
-    function renderPosts(posts) {
+    function showTab(tabName) {
+        currentTab = tabName;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabName).classList.add('active');
+        document.getElementById('writeBtn').style.display = (tabName === '홈') ? 'none' : 'block';
+        document.getElementById('contentTitle').innerText = (tabName === '홈') ? '📌 주요 공지사항' : tabName;
+        render();
+    }
+
+    function render() {
         const container = document.getElementById('postsContainer');
-        document.getElementById('loader').style.display = 'none';
         container.innerHTML = "";
 
-        // 고정글 우선 정렬
-        posts.sort((a, b) => b.pinned - a.pinned);
+        let filtered = [];
+        if (currentTab === '홈') {
+            // 홈화면: '공지사항' 중 고정된 글만 노출
+            filtered = allPosts.filter(p => p.category === '공지사항' && p.pinned);
+            if(filtered.length === 0) container.innerHTML = "<p style='color:#999'>현재 고정된 주요 공지가 없습니다.</p>";
+        } else {
+            // 일반 탭: 해당 카테고리 전체 노출 (고정글 우선)
+            filtered = allPosts.filter(p => p.category === currentTab)
+                               .sort((a, b) => b.pinned - a.pinned);
+        }
 
-        posts.forEach(p => {
-            const div = document.createElement('div');
-            div.className = `post ${p.pinned ? 'is-pinned' : ''}`;
-            div.innerHTML = `
-                ${p.pinned ? '<span class="pin-tag">📌 고정됨</span>' : ''}
-                <span class="post-name">${p.name}</span>
-                <div class="post-msg">${p.message}</div>
-                <div class="manage-box" style="display: ${isAdmin ? 'block' : 'none'}">
-                    <button class="btn-m" onclick="handleAction('togglePin', '${p.id}')">${p.pinned ? '고정 해제' : '상단 고정'}</button>
-                    <button class="btn-m btn-del" onclick="handleAction('delete', '${p.id}')">삭제</button>
+        filtered.forEach(p => {
+            const card = document.createElement('div');
+            card.className = `post-card ${p.pinned ? 'pinned' : ''}`;
+            
+            // 이미지인지 확인 (간단한 판별)
+            const isImg = p.file && (p.file.match(/\.(jpeg|jpg|gif|png|webp)$/i) || p.file.includes('drive.google.com'));
+            
+            card.innerHTML = `
+                ${p.pinned ? '<span class="pin-label">📌 고정됨</span>' : ''}
+                <div class="post-header">
+                    <span class="post-name">${p.name}</span>
+                    <span class="post-date">${new Date(p.date).toLocaleDateString()}</span>
+                </div>
+                <div class="post-content">${p.message}</div>
+                ${p.file ? (isImg ? `<img src="${p.file}" class="img-preview" onerror="this.style.display='none'">` : '') : ''}
+                ${p.file ? `<a href="${p.file}" target="_blank" class="attachment">📎 첨부 파일 확인하기</a>` : ''}
+                <div class="admin-controls" style="display: ${isAdmin ? 'block' : 'none'}">
+                    <button class="btn-s" onclick="handleAction('togglePin', '${p.id}')">${p.pinned ? '고정해제' : '고정하기'}</button>
+                    <button class="btn-s" style="color:red" onclick="handleAction('delete', '${p.id}')">삭제</button>
                 </div>
             `;
-            container.appendChild(div);
+            container.appendChild(card);
         });
     }
 
-    async function submitPost() {
-        const name = document.getElementById('name').value;
-        const message = document.getElementById('message').value;
-        if(!name || !message) return alert("내용을 입력해주세요.");
+    function openModal() {
+        document.getElementById('targetCategory').innerText = currentTab;
+        document.getElementById('writeModal').style.display = 'flex';
+    }
+    function closeModal() { document.getElementById('writeModal').style.display = 'none'; }
 
-        const btn = document.querySelector('.btn-submit');
-        btn.disabled = true;
-        btn.innerText = "등록 중...";
+    async function submitPost() {
+        const name = document.getElementById('w-name').value;
+        const message = document.getElementById('w-message').value;
+        const file = document.getElementById('w-file').value;
+        if(!name || !message) return alert("내용을 채워주세요.");
 
         await fetch(SCRIPT_URL, {
             method: 'POST',
-            body: JSON.stringify({ action: "add", name, message })
+            mode: 'no-cors',
+            body: JSON.stringify({ action: "add", category: currentTab, name, message, file })
         });
-
-        location.reload(); // 새로고침하여 데이터 갱신
+        alert("등록 요청 완료!");
+        location.reload();
     }
 
     function toggleAdmin() {
         if(!isAdmin) {
-            const pw = prompt("비밀번호를 입력하세요.");
-            if(pw === "2026") {
-                isAdmin = true;
-                alert("관리자 모드 활성화");
-                document.querySelectorAll('.manage-box').forEach(b => b.style.display = 'block');
-            } else { alert("틀렸습니다."); }
-        } else {
-            isAdmin = false;
-            document.querySelectorAll('.manage-box').forEach(b => b.style.display = 'none');
-        }
+            if(prompt("비밀번호") === "2026") { 
+                isAdmin = true; 
+                alert("관리자 인증됨"); 
+                document.querySelectorAll('.admin-controls').forEach(d => d.style.display = 'block');
+            }
+        } else { isAdmin = false; render(); }
     }
 
     async function handleAction(action, id) {
-        if(action === 'delete' && !confirm("정말 삭제할까요?")) return;
-        
-        await fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action, id })
-        });
+        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action, id }) });
         location.reload();
     }
 
-    // 초기 실행
-    fetchPosts();
+    loadData();
 </script>
-
 </body>
 </html>
