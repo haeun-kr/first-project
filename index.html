@@ -78,7 +78,7 @@
         <h3>글 올리기 (<span id="targetCategory"></span>)</h3>
         <input type="text" id="w-name" placeholder="작성자">
         <textarea id="w-message" placeholder="내용을 입력하세요" rows="5"></textarea>
-        <input type="text" id="w-file" placeholder="사진/문서 링크 (구글 드라이브 공유 링크 등)">
+        <input type="text" id="w-file" placeholder="사진/문서 링크 (파일 또는 문서 링크)">
         <div style="display: flex; gap: 10px;">
             <button class="write-trigger" style="position:static; flex:1;" onclick="submitPost()">등록</button>
             <button class="btn-s" style="flex:1;" onclick="closeModal()">취소</button>
@@ -87,7 +87,7 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "여기에_새로_받은_URL_넣기";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJoF2ek6KGJQg3GRnv_nXwI-StGGFauWK-G9JxJVTHN1oJ5aGOmt6sVpkApsQUsNIh5w/exec";
     let currentTab = '홈';
     let allPosts = [];
     let isAdmin = false;
@@ -159,7 +159,7 @@
         const name = document.getElementById('w-name').value;
         const message = document.getElementById('w-message').value;
         const file = document.getElementById('w-file').value;
-        if(!name || !message) return alert("내용을 채워주세요.");
+        if(!name || !message) return alert("내용을 입력해주세요.");
 
         await fetch(SCRIPT_URL, {
             method: 'POST',
